@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats — Retail ML</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh; color: #e0e0e0;
+        }
+        .navbar {
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+            padding: 1rem 2rem; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .navbar h1 { font-size: 1.3rem; color: #64b5f6; font-weight: 700; }
+        .navbar a { color: #90caf9; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; }
+        .container { max-width: 800px; margin: 3rem auto; padding: 0 2rem; }
+        h2 { text-align: center; font-size: 1.8rem; color: #64b5f6; margin-bottom: 2rem; }
+        .result-card {
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px; padding: 2.5rem; margin-bottom: 1.5rem;
+        }
+        .churn-gauge {
+            text-align: center; margin-bottom: 2rem;
+        }
+        .gauge-value {
+            font-size: 4.5rem; font-weight: 900; line-height: 1;
+        }
+        .gauge-label {
+            font-size: 1rem; color: #90a4ae; margin-top: 0.3rem;
+        }
+        .risk-badge {
+            display: inline-block;
+            padding: 0.4rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 0.8rem;
+        }
+        .progress-bar-bg {
+            width: 100%; height: 14px; background: rgba(255,255,255,0.1);
+            border-radius: 7px; overflow: hidden; margin: 1rem 0;
+        }
+        .progress-bar-fill {
+            height: 100%; border-radius: 7px;
+            transition: width 1s ease;
+        }
+        .info-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;
+        }
+        .info-item {
+            background: rgba(255,255,255,0.04); border-radius: 10px;
+            padding: 1rem; border-left: 3px solid #64b5f6;
+        }
+        .info-item label { font-size: 0.78rem; color: #90a4ae; display: block; margin-bottom: 0.3rem; }
+        .info-item span { font-size: 1.1rem; font-weight: 600; }
+        .recommendation {
+            background: rgba(100,181,246,0.08); border: 1px solid rgba(100,181,246,0.2);
+            border-radius: 12px; padding: 1.5rem; margin-top: 1rem;
+        }
+        .recommendation h4 { color: #64b5f6; margin-bottom: 0.8rem; font-size: 1rem; }
+        .recommendation ul { list-style: none; }
+        .recommendation li { padding: 0.4rem 0; font-size: 0.92rem; }
+        .recommendation li::before { content: "→ "; color: #64b5f6; }
+        .error-card { background: rgba(231,76,60,0.15); border: 1px solid #e74c3c; border-radius: 12px; padding: 1.5rem; }
+        .btn-back {
+            display: block; width: 100%; padding: 0.9rem;
+            background: linear-gradient(90deg, #1565c0, #6a1b9a);
+            color: #fff; text-decoration: none; text-align: center;
+            border-radius: 10px; font-weight: 700; margin-top: 1.5rem; font-size: 1rem;
+        }
+        .btn-back:hover { opacity: 0.9; }
+        .segment-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.3);
+            border-radius: 8px; padding: 0.7rem 1.2rem; margin-top: 0.8rem;
+            font-size: 1rem; font-weight: 600; color: #a78bfa;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🛒 Retail ML Analytics</h1>
+        <div>
+            <a href="/">Accueil</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>📊 Résultats d'Analyse</h2>
+
+        {% if result.error %}
+        <div class="error-card">
+            <h3>⚠️ Erreur</h3>
+            <p style="margin-top:0.5rem;">{{ result.error }}</p>
+            <p style="margin-top:0.8rem; color:#90a4ae; font-size:0.9rem;">
+                Assurez-vous d'avoir exécuté <code>preprocessing.py</code> puis <code>train_model.py</code> avant de lancer l'application.
+            </p>
+        </div>
+        {% else %}
+
+        <div class="result-card">
+            <div class="churn-gauge">
+                <div class="gauge-value" style="color: {{ result.risk_color }}">
+                    {{ result.churn_proba }}%
+                </div>
+                <div class="gauge-label">Probabilité de Churn</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill"
+                         style="width: {{ result.churn_proba }}%;
+                                background: linear-gradient(90deg, #27ae60, {{ result.risk_color }});">
+                    </div>
+                </div>
+                <span class="risk-badge" style="background: {{ result.risk_color }}22; color: {{ result.risk_color }}; border: 1px solid {{ result.risk_color }}44;">
+                    {{ result.risk_icon }} Risque {{ result.risk }}
+                </span>
+            </div>
+
+            {% if result.segment is defined %}
+            <div style="text-align:center;">
+                <div class="segment-badge">
+                    🎯 Segment client : Cluster {{ result.segment }}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Recency (jours)</label>
+                    <span>{{ result.features.Recency }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Frequency (commandes)</label>
+                    <span>{{ result.features.Frequency }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Monetary Total</label>
+                    <span>{{ result.features.MonetaryTotal }} £</span>
+                </div>
+                <div class="info-item">
+                    <label>Satisfaction</label>
+                    <span>{{ result.features.Satisfaction }} / 5</span>
+                </div>
+                <div class="info-item">
+                    <label>Tickets Support</label>
+                    <span>{{ result.features.SupportTickets }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Ancienneté</label>
+                    <span>{{ result.features.CustomerTenure }} jours</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-card">
+            <div class="recommendation">
+                <h4>💡 Recommandations Marketing</h4>
+                <ul>
+                    {% if result.risk == "Critique" or result.risk == "Élevé" %}
+                    <li>Lancer une campagne de rétention personnalisée en urgence</li>
+                    <li>Offrir un bon de réduction ou avantage exclusif</li>
+                    <li>Contacter le client via l'équipe support proactivement</li>
+                    <li>Analyser les causes du mécontentement (tickets, retours)</li>
+                    {% elif result.risk == "Moyen" %}
+                    <li>Envoyer un email de re-engagement avec offre personnalisée</li>
+                    <li>Proposer une adhésion au programme de fidélité</li>
+                    <li>Surveiller les prochains achats et comportements</li>
+                    {% else %}
+                    <li>Maintenir la relation avec newsletters et recommandations produits</li>
+                    <li>Valoriser ce client via le programme VIP si éligible</li>
+                    <li>Encourager le parrainage et les avis produits</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        {% endif %}
+
+        <a href="/" class="btn-back">← Analyser un autre client</a>
+    </div>
+</body>
+</html>

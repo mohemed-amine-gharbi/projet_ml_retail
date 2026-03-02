@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail ML — Analyse Comportementale Clientèle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+        .navbar {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .navbar h1 { font-size: 1.3rem; color: #64b5f6; font-weight: 700; }
+        .navbar a {
+            color: #90caf9; text-decoration: none; margin-left: 1.5rem;
+            font-size: 0.9rem; transition: color 0.2s;
+        }
+        .navbar a:hover { color: #fff; }
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+        }
+        .hero h2 {
+            font-size: 2.2rem; font-weight: 800;
+            background: linear-gradient(90deg, #64b5f6, #a78bfa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 0.8rem;
+        }
+        .hero p { color: #90a4ae; font-size: 1.05rem; }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .card-info {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 1.3rem;
+            text-align: center;
+        }
+        .card-info .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .card-info h3 { font-size: 0.9rem; color: #90caf9; }
+        .card-info p { font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.3rem; }
+        .form-container {
+            max-width: 750px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .form-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 2.5rem;
+        }
+        .form-card h3 {
+            font-size: 1.3rem; color: #64b5f6; margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.3rem;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-group label { font-size: 0.85rem; color: #90a4ae; font-weight: 600; }
+        .form-group input, .form-group select {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 0.65rem 0.9rem;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #64b5f6;
+            background: rgba(100,181,246,0.08);
+        }
+        .form-group input::placeholder { color: #546e7a; }
+        .btn-predict {
+            width: 100%;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: linear-gradient(90deg, #1565c0, #6a1b9a);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+        .btn-predict:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-predict:active { transform: translateY(0); }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #546e7a;
+            font-size: 0.85rem;
+        }
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .hero h2 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🛒 Retail ML Analytics</h1>
+        <div>
+            <a href="/">Accueil</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h2>Analyse Comportementale Clientèle</h2>
+        <p>Prédiction du Churn · Segmentation K-Means · Modèles Random Forest & Gradient Boosting</p>
+    </div>
+
+    <div class="cards-grid">
+        <div class="card-info">
+            <div class="icon">🤖</div>
+            <h3>Modèles ML</h3>
+            <p>4</p>
+        </div>
+        <div class="card-info">
+            <div class="icon">📊</div>
+            <h3>Features</h3>
+            <p>52</p>
+        </div>
+        <div class="card-info">
+            <div class="icon">👥</div>
+            <h3>Clients analysés</h3>
+            <p>2 000</p>
+        </div>
+        <div class="card-info">
+            <div class="icon">🎯</div>
+            <h3>Tâches ML</h3>
+            <p>3</p>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <div class="form-card">
+            <h3>🔮 Analyser un client</h3>
+            <form action="/predict" method="POST">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Recency (jours depuis dernier achat)</label>
+                        <input type="number" name="recency" placeholder="ex : 30" min="0" max="400" value="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Frequency (nb commandes)</label>
+                        <input type="number" name="frequency" placeholder="ex : 5" min="1" max="50" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Monetary Total (£)</label>
+                        <input type="number" name="monetary_total" placeholder="ex : 500" value="500">
+                    </div>
+                    <div class="form-group">
+                        <label>Monetary Avg (£ / commande)</label>
+                        <input type="number" name="monetary_avg" placeholder="ex : 100" value="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Tenure (jours)</label>
+                        <input type="number" name="customer_tenure" placeholder="ex : 180" min="0" max="730" value="180">
+                    </div>
+                    <div class="form-group">
+                        <label>Return Ratio (0.0 – 1.0)</label>
+                        <input type="number" name="return_ratio" step="0.01" placeholder="ex : 0.05" min="0" max="1" value="0.05">
+                    </div>
+                    <div class="form-group">
+                        <label>Support Tickets</label>
+                        <input type="number" name="support_tickets" placeholder="ex : 1" min="0" max="15" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Satisfaction (/5)</label>
+                        <input type="number" name="satisfaction" step="0.1" placeholder="ex : 3.5" min="0" max="5" value="3.5">
+                    </div>
+                    <div class="form-group">
+                        <label>Âge (ans)</label>
+                        <input type="number" name="age" placeholder="ex : 35" min="18" max="81" value="35">
+                    </div>
+                </div>
+                <button type="submit" class="btn-predict">⚡ Analyser ce client</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer">
+        Projet ML Retail · GI2 · Préparé par Fadoua Drira · 2025-2026
+    </div>
+</body>
+</html>
