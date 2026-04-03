@@ -31,7 +31,7 @@ MODELS_DIR = os.path.join(BASE_DIR, "models")
 REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 
 
-def load_raw_data(filename="retail.csv"):
+def load_raw_data(filename="projet.csv"):
     """Charge les données brutes."""
     path = os.path.join(DATA_RAW, filename)
     df = pd.read_csv(path, low_memory=False)

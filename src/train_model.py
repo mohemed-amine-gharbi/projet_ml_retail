@@ -188,6 +188,116 @@ def run_kmeans(X_train_pca, X_train_original, k_range=range(2, 9)):
     return kmeans, labels, best_k
 
 
+# ════════════════════════════════════════════════════════════════════════════
+# MODULE 3 : CLASSIFICATION — CHURN
+# ════════════════════════════════════════════════════════════════════════════
+def run_classification(X_train, X_test, y_train, y_test):
+    """Random Forest + Gradient Boosting pour prédire le Churn."""
+    print("\n" + "="*60)
+    print("MODULE 3 : CLASSIFICATION — PRÉDICTION CHURN")
+    print("="*60)
+    print(f"  Distribution Churn — Train : {y_train.mean():.1%} | Test : {y_test.mean():.1%}")
+
+    print("\n  ⚙️  Random Forest en cours...")
+    rf = RandomForestClassifier(n_estimators=200, max_depth=10, min_samples_leaf=5,
+                                class_weight="balanced", random_state=42, n_jobs=-1)
+    rf.fit(X_train, y_train)
+    rf_pred  = rf.predict(X_test)
+    rf_proba = rf.predict_proba(X_test)[:, 1]
+    rf_auc   = roc_auc_score(y_test, rf_proba)
+    print(f"  ✅ Random Forest — AUC : {rf_auc:.4f}")
+    print(classification_report(y_test, rf_pred, target_names=["Fidèle", "Churned"]))
+
+    print("\n  ⚙️  Gradient Boosting en cours...")
+    gb = GradientBoostingClassifier(n_estimators=200, max_depth=5,
+                                    learning_rate=0.05, subsample=0.8, random_state=42)
+    gb.fit(X_train, y_train)
+    gb_pred  = gb.predict(X_test)
+    gb_proba = gb.predict_proba(X_test)[:, 1]
+    gb_auc   = roc_auc_score(y_test, gb_proba)
+    print(f"  ✅ Gradient Boosting — AUC : {gb_auc:.4f}")
+    print(classification_report(y_test, gb_pred, target_names=["Fidèle", "Churned"]))
+
+    best_clf  = rf   if rf_auc >= gb_auc else gb
+    best_name = "RandomForest" if rf_auc >= gb_auc else "GradientBoosting"
+    best_pred = rf_pred  if rf_auc >= gb_auc else gb_pred
+    best_proba= rf_proba if rf_auc >= gb_auc else gb_proba
+    print(f"\n  🏆 Meilleur modèle : {best_name} (AUC={max(rf_auc, gb_auc):.4f})")
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    fpr_rf, tpr_rf, _ = roc_curve(y_test, rf_proba)
+    fpr_gb, tpr_gb, _ = roc_curve(y_test, gb_proba)
+    axes[0].plot(fpr_rf, tpr_rf, label=f"Random Forest (AUC={rf_auc:.3f})", color="#3498db", lw=2)
+    axes[0].plot(fpr_gb, tpr_gb, label=f"Gradient Boosting (AUC={gb_auc:.3f})", color="#e74c3c", lw=2)
+    axes[0].plot([0, 1], [0, 1], "k--", lw=1)
+    axes[0].set_xlabel("Taux de faux positifs"); axes[0].set_ylabel("Taux de vrais positifs")
+    axes[0].set_title("Courbe ROC — Prédiction Churn")
+    axes[0].legend(); axes[0].grid(alpha=0.3)
+
+    cm = confusion_matrix(y_test, best_pred)
+    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=axes[1],
+                xticklabels=["Fidèle", "Churned"], yticklabels=["Fidèle", "Churned"])
+    axes[1].set_title(f"Matrice de confusion — {best_name}")
+    axes[1].set_xlabel("Prédit"); axes[1].set_ylabel("Réel")
+    plt.tight_layout()
+    plt.savefig(os.path.join(REPORTS_DIR, "classification_results.png"), dpi=120, bbox_inches="tight")
+    plt.close()
+
+    if hasattr(best_clf, "feature_importances_"):
+        plot_feature_importance(best_clf, X_train.columns,
+                                title=f"Importance des features — {best_name}")
+
+    save_model(best_clf, "classifier_churn")
+    save_model(rf,       "random_forest_churn")
+    save_model(gb,       "gradient_boosting_churn")
+    return best_clf
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# MODULE 4 : RÉGRESSION — MonetaryTotal
+# ════════════════════════════════════════════════════════════════════════════
+def run_regression(X_train, X_test, y_train, y_test):
+    """Random Forest Regressor pour prédire MonetaryTotal."""
+    print("\n" + "="*60)
+    print("MODULE 4 : RÉGRESSION — PRÉDICTION MonetaryTotal")
+    print("="*60)
+
+    # ── CORRECTION BUG : encoder les colonnes texte résiduelles ────────────
+    X_train = _encode_and_clean(X_train.copy())
+    X_test  = _encode_and_clean(X_test.copy())
+
+    rfr = RandomForestRegressor(n_estimators=200, max_depth=12, min_samples_leaf=5,
+                                random_state=42, n_jobs=-1)
+    rfr.fit(X_train, y_train)
+    y_pred = rfr.predict(X_test)
+
+    mae  = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2   = r2_score(y_test, y_pred)
+    print(f"  ✅ MAE  : {mae:.2f} £")
+    print(f"  ✅ RMSE : {rmse:.2f} £")
+    print(f"  ✅ R²   : {r2:.4f}")
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    lim = max(abs(y_test.min()), abs(y_test.max()), abs(y_pred.min()), abs(y_pred.max()))
+    axes[0].scatter(y_test, y_pred, alpha=0.4, s=10, color="#27ae60")
+    axes[0].plot([-lim, lim], [-lim, lim], "r--", lw=1.5)
+    axes[0].set_xlabel("Réel (£)"); axes[0].set_ylabel("Prédit (£)")
+    axes[0].set_title(f"Réel vs Prédit — R²={r2:.3f}"); axes[0].grid(alpha=0.3)
+
+    residuals = y_test.values - y_pred
+    axes[1].hist(residuals, bins=40, color="#f39c12", edgecolor="white")
+    axes[1].axvline(0, color="red", linestyle="--")
+    axes[1].set_xlabel("Résidus (£)"); axes[1].set_ylabel("Fréquence")
+    axes[1].set_title(f"Distribution des résidus — MAE={mae:.1f}£"); axes[1].grid(alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(REPORTS_DIR, "regression_results.png"), dpi=120, bbox_inches="tight")
+    plt.close()
+
+    save_model(rfr, "regressor_monetary")
+    return rfr
+
 
 # ── Pipeline principal ───────────────────────────────────────────────────────
 def run_all_models():
@@ -199,6 +309,39 @@ def run_all_models():
     # MODULE 2 — Clustering
     kmeans, labels, best_k = run_kmeans(X_train_pca, X_train)
 
+    # MODULE 3 — Classification Churn
+    best_clf = run_classification(X_train, X_test, y_train, y_test)
+
+    # MODULE 4 — Régression MonetaryTotal
+    processed_path = os.path.join(
+        os.path.dirname(DATA_TRAIN_TEST), "processed", "projet_processed.csv"
+    )
+    if os.path.exists(processed_path):
+        df_processed = pd.read_csv(processed_path)
+        # Chercher la colonne MonetaryTotal (nom exact ou variante)
+        monetary_col = None
+        for candidate in ["MonetaryTotal", "Monetary", "monetary_total"]:
+            if candidate in df_processed.columns:
+                monetary_col = candidate
+                break
+
+        if monetary_col:
+            X_reg = df_processed.drop(columns=[monetary_col, "Churn"], errors="ignore")
+            y_reg = df_processed[monetary_col]
+            # ── Encoder les colonnes texte ICI avant le split ──────────────
+            X_reg = _encode_and_clean(X_reg)
+            Xr_train, Xr_test, yr_train, yr_test = train_test_split(
+                X_reg, y_reg, test_size=0.2, random_state=42
+            )
+            sc = StandardScaler()
+            num_cols = Xr_train.select_dtypes(include=[np.number]).columns
+            Xr_train[num_cols] = sc.fit_transform(Xr_train[num_cols])
+            Xr_test[num_cols]  = sc.transform(Xr_test[num_cols])
+            run_regression(Xr_train, Xr_test, yr_train, yr_test)
+        else:
+            print("\n⚠️  MonetaryTotal introuvable dans processed — régression ignorée")
+    else:
+        print("\n⚠️  Données processed non trouvées — exécutez preprocessing.py d'abord")
 
     print("\n✅ Tous les modèles entraînés et sauvegardés !\n")
 
