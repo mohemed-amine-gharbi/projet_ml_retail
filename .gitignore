@@ -1,0 +1,45 @@
+# Environnement virtuel
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Données (optionnel : conserver le script de génération)
+data/raw/projet.csv
+data/processed/
+data/train_test/
+
+# Modèles sauvegardés (trop lourds pour Git)
+models/*.joblib
+models/*.pkl
+
+# Rapports / visualisations
+reports/*.png
+reports/*.csv
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Variables d'environnement
+.env
+*.env
