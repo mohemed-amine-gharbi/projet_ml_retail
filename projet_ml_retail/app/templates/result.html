@@ -11,194 +11,456 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh; color: #e0e0e0;
         }
+
+        /* ── NAVBAR ── */
         .navbar {
-            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
-            padding: 1rem 2rem; display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(12px);
+            padding: 0 2rem; display: flex; align-items: center;
+            justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1);
+            height: 60px; position: sticky; top: 0; z-index: 100;
         }
-        .navbar h1 { font-size: 1.3rem; color: #64b5f6; font-weight: 700; }
-        .navbar a { color: #90caf9; text-decoration: none; margin-left: 1.5rem; }
-        .container { max-width: 800px; margin: 3rem auto; padding: 0 2rem; }
-        h2 { text-align: center; font-size: 1.8rem; color: #64b5f6; margin-bottom: 2rem; }
-
-        .result-card {
-            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 16px; padding: 2.5rem; margin-bottom: 1.5rem;
+        .navbar-brand { font-size: 1.15rem; font-weight: 700; color: #64b5f6; text-decoration: none; }
+        .navbar-links { display: flex; align-items: center; gap: 0.3rem; }
+        .navbar-links a {
+            color: #90caf9; text-decoration: none; font-size: 0.88rem;
+            padding: 0.4rem 0.85rem; border-radius: 8px;
+            display: flex; align-items: center; gap: 5px;
+            transition: background .15s, color .15s; white-space: nowrap;
         }
-        .churn-gauge { text-align: center; margin-bottom: 2rem; }
-        .gauge-value { font-size: 4.5rem; font-weight: 900; line-height: 1; }
-        .gauge-label { font-size: 1rem; color: #90a4ae; margin-top: 0.3rem; }
-
-        /* Couleurs de risque via classes CSS (évite le parsing Jinja dans <style>) */
-        .risk-badge {
-            display: inline-block;
-            padding: 0.4rem 1.5rem; border-radius: 50px;
-            font-size: 1.1rem; font-weight: 700; margin-top: 0.8rem;
-        }
-        .risk-faible  { background: rgba(39,174,96,.15);  color: #27ae60; border: 1px solid rgba(39,174,96,.4); }
-        .risk-moyen   { background: rgba(243,156,18,.15); color: #f39c12; border: 1px solid rgba(243,156,18,.4); }
-        .risk-eleve   { background: rgba(230,126,34,.15); color: #e67e22; border: 1px solid rgba(230,126,34,.4); }
-        .risk-critique{ background: rgba(231,76,60,.15);  color: #e74c3c; border: 1px solid rgba(231,76,60,.4); }
-
-        .gauge-value.risk-faible   { color: #27ae60; }
-        .gauge-value.risk-moyen    { color: #f39c12; }
-        .gauge-value.risk-eleve    { color: #e67e22; }
-        .gauge-value.risk-critique { color: #e74c3c; }
-
-        .progress-bar-bg {
-            width: 100%; height: 14px; background: rgba(255,255,255,0.1);
-            border-radius: 7px; overflow: hidden; margin: 1rem 0;
-        }
-        .progress-bar-fill {
-            height: 100%; border-radius: 7px;
-            background: linear-gradient(90deg, #27ae60, #e74c3c);
+        .navbar-links a:hover  { background: rgba(255,255,255,0.08); color: #fff; }
+        .navbar-links a.active { background: rgba(100,181,246,0.15); color: #64b5f6; font-weight: 600; }
+        .nav-badge { background: rgba(100,181,246,0.25); color: #64b5f6; font-size: 10px;
+                     font-weight: 700; padding: 1px 6px; border-radius: 10px; }
+        .nav-toggle { display: none; background: transparent; border: 1px solid rgba(255,255,255,0.2);
+                      color: #90caf9; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+        @media (max-width: 700px) {
+            .nav-toggle { display: block; }
+            .navbar-links { display: none; flex-direction: column; position: absolute;
+                            top: 60px; left: 0; right: 0; background: #16213e;
+                            border-bottom: 1px solid rgba(255,255,255,0.1);
+                            padding: 0.8rem 1rem; gap: 0.2rem; }
+            .navbar-links.open { display: flex; }
+            .navbar-links a { width: 100%; }
         }
 
-        .info-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;
+        /* ── PAGE ── */
+        .container { max-width: 900px; margin: 2.5rem auto; padding: 0 1.5rem; }
+        .page-title {
+            text-align: center; font-size: 1.7rem; color: #64b5f6;
+            margin-bottom: 2rem; font-weight: 700;
         }
-        .info-item {
-            background: rgba(255,255,255,0.04); border-radius: 10px;
-            padding: 1rem; border-left: 3px solid #64b5f6;
-        }
-        .info-item label { font-size: 0.78rem; color: #90a4ae; display: block; margin-bottom: 0.3rem; }
-        .info-item span  { font-size: 1.1rem; font-weight: 600; }
 
-        .recommendation {
-            background: rgba(100,181,246,0.08); border: 1px solid rgba(100,181,246,0.2);
-            border-radius: 12px; padding: 1.5rem; margin-top: 1rem;
+        /* ── GRILLE DES 3 MODELES ── */
+        .models-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
         }
-        .recommendation h4 { color: #64b5f6; margin-bottom: 0.8rem; font-size: 1rem; }
-        .recommendation ul  { list-style: none; }
-        .recommendation li  { padding: 0.4rem 0; font-size: 0.92rem; }
-        .recommendation li::before { content: "→ "; color: #64b5f6; }
+        @media (max-width: 750px) { .models-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1000px) and (min-width: 751px) { .models-grid { grid-template-columns: 1fr 1fr; } }
 
-        .segment-badge {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.3);
-            border-radius: 8px; padding: 0.7rem 1.2rem; margin-top: 0.8rem;
-            font-size: 1rem; font-weight: 600; color: #a78bfa;
+        /* ── CARTE MODELE ── */
+        .model-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px; padding: 1.5rem;
+            display: flex; flex-direction: column; gap: 0.8rem;
+            transition: border-color .2s;
         }
+        .model-card:hover { border-color: rgba(100,181,246,0.3); }
+
+        .model-card-header {
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 0.8rem;
+        }
+        .model-icon { font-size: 1.5rem; }
+        .model-label { font-size: 10px; font-weight: 700; text-transform: uppercase;
+                       letter-spacing: .08em; color: #546e7a; }
+        .model-name  { font-size: 0.9rem; font-weight: 600; color: #90caf9; }
+
+        /* ── CHURN CARD ── */
+        .churn-proba {
+            font-size: 3.2rem; font-weight: 900; line-height: 1;
+            text-align: center; margin: 0.3rem 0;
+        }
+        .churn-label { text-align: center; font-size: 0.8rem; color: #90a4ae; margin-bottom: 0.5rem; }
+
+        .progress-bg   { width: 100%; height: 10px; background: rgba(255,255,255,0.1);
+                          border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 5px;
+                         background: linear-gradient(90deg, #27ae60, #e74c3c);
+                         transition: width .8s ease; }
+
+        .risk-pill {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            width: 100%; padding: 0.5rem 0; border-radius: 8px;
+            font-size: 0.95rem; font-weight: 700; margin-top: 0.3rem;
+        }
+        .risk-faible   { background: rgba(39,174,96,.18);  color: #4ade80; border: 1px solid rgba(39,174,96,.35); }
+        .risk-moyen    { background: rgba(243,156,18,.18); color: #fbbf24; border: 1px solid rgba(243,156,18,.35); }
+        .risk-eleve    { background: rgba(230,126,34,.18); color: #fb923c; border: 1px solid rgba(230,126,34,.35); }
+        .risk-critique { background: rgba(231,76,60,.18);  color: #f87171; border: 1px solid rgba(231,76,60,.35); }
+
+        .churn-proba.risk-faible   { color: #4ade80; }
+        .churn-proba.risk-moyen    { color: #fbbf24; }
+        .churn-proba.risk-eleve    { color: #fb923c; }
+        .churn-proba.risk-critique { color: #f87171; }
+
+        /* ── SEGMENT CARD ── */
+        .segment-number {
+            font-size: 4rem; font-weight: 900; text-align: center;
+            color: #a78bfa; line-height: 1; margin: 0.3rem 0;
+        }
+        .segment-sublabel { text-align: center; font-size: 0.8rem; color: #90a4ae; }
+        .seg-bars { display: flex; flex-direction: column; gap: 5px; margin-top: 0.5rem; }
+        .seg-bar-row { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+        .seg-bar-label { width: 60px; color: #90a4ae; text-align: right; flex-shrink: 0; }
+        .seg-bar-bg  { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+        .seg-bar-fill { height: 100%; border-radius: 3px; background: #a78bfa; transition: width .8s ease; }
+        .seg-bar-active .seg-bar-fill { background: #7c3aed; }
+        .seg-bar-val { width: 38px; color: #90a4ae; font-size: 10px; }
+
+        /* ── MONETARY CARD ── */
+        .monetary-amount {
+            font-size: 2.8rem; font-weight: 900; text-align: center;
+            color: #34d399; line-height: 1; margin: 0.3rem 0;
+        }
+        .monetary-currency { font-size: 1.2rem; font-weight: 400; color: #6ee7b7; }
+        .monetary-label { text-align: center; font-size: 0.8rem; color: #90a4ae; }
+        .monetary-badge {
+            display: flex; align-items: center; justify-content: center;
+            gap: 6px; margin-top: 0.5rem;
+            background: rgba(52,211,153,.12); border: 1px solid rgba(52,211,153,.25);
+            border-radius: 8px; padding: 0.5rem; font-size: 0.82rem; color: #6ee7b7;
+        }
+
+        /* ── FEATURES RECAP ── */
+        .features-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 1.3rem; margin-bottom: 1.5rem;
+        }
+        .features-title { font-size: 10px; font-weight: 700; text-transform: uppercase;
+                          letter-spacing: .08em; color: #546e7a; margin-bottom: 1rem; }
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 0.7rem;
+        }
+        .feature-item {
+            background: rgba(255,255,255,0.04); border-radius: 8px; padding: 0.6rem 0.8rem;
+            border-left: 2px solid #64b5f6;
+        }
+        .feature-item label { display: block; font-size: 10px; color: #546e7a; margin-bottom: 2px; }
+        .feature-item span  { font-size: 0.95rem; font-weight: 600; }
+
+        /* ── RECOMMANDATIONS ── */
+        .reco-card {
+            background: rgba(100,181,246,0.06);
+            border: 1px solid rgba(100,181,246,0.18);
+            border-radius: 14px; padding: 1.3rem; margin-bottom: 1.5rem;
+        }
+        .reco-title { font-size: 0.95rem; font-weight: 700; color: #64b5f6;
+                      margin-bottom: 0.8rem; display: flex; align-items: center; gap: 6px; }
+        .reco-list { list-style: none; }
+        .reco-list li { padding: 0.35rem 0; font-size: 0.88rem; color: #b0bec5; }
+        .reco-list li::before { content: "→ "; color: #64b5f6; }
+
+        /* ── BOUTONS ── */
+        .btn-row { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+        .btn {
+            flex: 1; min-width: 150px; padding: 0.85rem; text-align: center;
+            border-radius: 10px; font-weight: 600; font-size: 0.9rem;
+            text-decoration: none; transition: opacity .2s, background .15s;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #1565c0, #6a1b9a); color: #fff;
+        }
+        .btn-primary:hover { opacity: .88; }
+        .btn-secondary {
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+            color: #90caf9;
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+        /* ── ERREUR ── */
         .error-card {
-            background: rgba(231,76,60,0.15); border: 1px solid #e74c3c;
-            border-radius: 12px; padding: 1.5rem;
+            background: rgba(231,76,60,0.12); border: 1px solid rgba(231,76,60,0.4);
+            border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;
         }
-        .btn-back {
-            display: block; width: 100%; padding: 0.9rem;
-            background: linear-gradient(90deg, #1565c0, #6a1b9a);
-            color: #fff; text-decoration: none; text-align: center;
-            border-radius: 10px; font-weight: 700; margin-top: 1.5rem; font-size: 1rem;
+        .error-card h3 { color: #f87171; margin-bottom: 0.5rem; }
+        .error-card p  { font-size: 0.9rem; color: #fca5a5; }
+        .error-card code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; }
+
+        /* ── NA ── */
+        .na-card {
+            background: rgba(255,255,255,0.04); border: 1px dashed rgba(255,255,255,0.15);
+            border-radius: 16px; padding: 2rem; text-align: center;
+            color: #546e7a; font-size: 0.85rem; display: flex;
+            flex-direction: column; align-items: center; gap: 0.5rem;
         }
-        .btn-back:hover { opacity: 0.9; }
+        .na-icon { font-size: 1.8rem; opacity: .4; }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <h1>🛒 Retail ML Analytics</h1>
-        <div>
-            <a href="/">Accueil</a>
-            <a href="/dashboard">Dashboard</a>
-        </div>
-    </nav>
 
-    <div class="container">
-        <h2>📊 Résultats d'Analyse</h2>
+<nav class="navbar">
+    <a href="/" class="navbar-brand">🛒 Retail ML Analytics</a>
+    <div class="navbar-links">
+        <a href="/">🏠 Accueil</a>
+        <a href="/dashboard">📈 Dashboard</a>
+        <a href="/test-models">🧪 Test modèles <span class="nav-badge">5</span></a>
+    </div>
+    <button class="nav-toggle" onclick="document.querySelector('.navbar-links').classList.toggle('open')">☰</button>
+</nav>
 
-        {% if result.error %}
-        <div class="error-card">
-            <h3>⚠️ Erreur</h3>
-            <p style="margin-top:0.5rem;">{{ result.error }}</p>
-            <p style="margin-top:0.8rem; color:#90a4ae; font-size:0.9rem;">
-                Assurez-vous d'avoir exécuté <code>preprocessing.py</code>
-                puis <code>train_model.py</code> avant de lancer l'application.
-            </p>
-        </div>
+<div class="container">
 
-        {% else %}
+    <div class="page-title">📊 Résultats d'Analyse Client</div>
 
-        {% set risk_class = {
+    {% if result.error %}
+    <!-- ── ERREUR ── -->
+    <div class="error-card">
+        <h3>⚠️ Erreur de prédiction</h3>
+        <p>{{ result.error }}</p>
+        <p style="margin-top:.6rem;color:#90a4ae;">
+            Assurez-vous d'avoir exécuté
+            <code>preprocessing.py</code> puis <code>train_model.py</code>.
+        </p>
+    </div>
+
+    {% else %}
+
+    <!-- ── GRILLE 3 MODELES ── -->
+    <div class="models-grid">
+
+        <!-- ──────── CHURN CLASSIFIER ──────── -->
+        {% if result.churn_proba is defined %}
+        {% set risk_cls = {
             "Faible":   "risk-faible",
             "Moyen":    "risk-moyen",
-            "Élevé":    "risk-eleve",
+            "Eleve":    "risk-eleve",
             "Critique": "risk-critique"
         }.get(result.risk, "risk-moyen") %}
-
-        <div class="result-card">
-            <div class="churn-gauge">
-                <div class="gauge-value {{ risk_class }}">
-                    {{ result.churn_proba }}%
+        <div class="model-card">
+            <div class="model-card-header">
+                <span class="model-icon">🔮</span>
+                <div>
+                    <div class="model-label">Churn Classifier</div>
+                    <div class="model-name">Probabilité de désabonnement</div>
                 </div>
-                <div class="gauge-label">Probabilité de Churn</div>
-
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill"
-                                 data-width="{{ result.churn_proba }}"></div>
-                </div>
-
-                <span class="risk-badge {{ risk_class }}">
-                    {{ result.risk_icon }} Risque {{ result.risk }}
-                </span>
             </div>
 
-            {% if result.segment is defined %}
-            <div style="text-align:center;">
-                <span class="segment-badge">🎯 Segment client : Cluster {{ result.segment }}</span>
-            </div>
-            {% endif %}
+            <div class="churn-proba {{ risk_cls }}" id="churn-val">{{ result.churn_proba }}%</div>
+            <div class="churn-label">probabilité de churn</div>
 
-            <div class="info-grid">
-                <div class="info-item">
-                    <label>Recency (jours)</label>
-                    <span>{{ result.features.Recency }}</span>
-                </div>
-                <div class="info-item">
-                    <label>Frequency (commandes)</label>
-                    <span>{{ result.features.Frequency }}</span>
-                </div>
-                <div class="info-item">
-                    <label>Monetary Total</label>
-                    <span>{{ result.features.MonetaryTotal }} £</span>
-                </div>
-                <div class="info-item">
-                    <label>Satisfaction</label>
-                    <span>{{ result.features.Satisfaction }} / 5</span>
-                </div>
-                <div class="info-item">
-                    <label>Tickets Support</label>
-                    <span>{{ result.features.SupportTickets }}</span>
-                </div>
-                <div class="info-item">
-                    <label>Ancienneté</label>
-                    <span>{{ result.features.CustomerTenure }} jours</span>
-                </div>
+            <div class="progress-bg">
+                <div class="progress-fill" id="churn-bar" style="width:0%"></div>
+            </div>
+
+            <div class="risk-pill {{ risk_cls }}">
+                {% if result.risk == "Faible" %}✅{% elif result.risk == "Moyen" %}⚠️{% elif result.risk == "Eleve" %}🔶{% else %}🚨{% endif %}
+                Risque {{ result.risk }}
             </div>
         </div>
-
-        <div class="result-card">
-            <div class="recommendation">
-                <h4>💡 Recommandations Marketing</h4>
-                <ul>
-                    {% if result.risk in ["Critique", "Élevé"] %}
-                    <li>Lancer une campagne de rétention personnalisée en urgence</li>
-                    <li>Offrir un bon de réduction ou avantage exclusif</li>
-                    <li>Contacter le client via l'équipe support proactivement</li>
-                    <li>Analyser les causes du mécontentement (tickets, retours)</li>
-                    {% elif result.risk == "Moyen" %}
-                    <li>Envoyer un email de re-engagement avec offre personnalisée</li>
-                    <li>Proposer une adhésion au programme de fidélité</li>
-                    <li>Surveiller les prochains achats et comportements</li>
-                    {% else %}
-                    <li>Maintenir la relation avec newsletters et recommandations produits</li>
-                    <li>Valoriser ce client via le programme VIP si éligible</li>
-                    <li>Encourager le parrainage et les avis produits</li>
-                    {% endif %}
-                </ul>
-            </div>
+        {% else %}
+        <div class="na-card">
+            <div class="na-icon">🔮</div>
+            <div>Churn Classifier</div>
+            <small>Modèle non chargé</small>
         </div>
-
         {% endif %}
 
-        <a href="/" class="btn-back">← Analyser un autre client</a>
+        <!-- ──────── K-MEANS SEGMENT ──────── -->
+        {% if result.segment is defined %}
+        <div class="model-card">
+            <div class="model-card-header">
+                <span class="model-icon">🎯</span>
+                <div>
+                    <div class="model-label">K-Means Clustering</div>
+                    <div class="model-name">Segment client assigné</div>
+                </div>
+            </div>
+
+            <div class="segment-number">{{ result.segment }}</div>
+            <div class="segment-sublabel">Cluster {{ result.segment }} / {{ result.n_clusters - 1 }}</div>
+
+            {% if result.seg_distances %}
+            <div class="seg-bars">
+                {% set max_dist = result.seg_distances.values() | max %}
+                {% set min_dist = result.seg_distances.values() | min %}
+                {% set dist_range = max_dist - min_dist if max_dist != min_dist else 1 %}
+                {% for cluster, dist in result.seg_distances.items() %}
+                {% set is_active = (loop.index0 == result.segment) %}
+                {% set pct = ((max_dist - dist) / dist_range * 100) | round(1) %}
+                <div class="seg-bar-row {% if is_active %}seg-bar-active{% endif %}">
+                    <div class="seg-bar-label">{{ cluster }}</div>
+                    <div class="seg-bar-bg">
+                        <div class="seg-bar-fill"
+                             data-w="{{ pct }}"
+                             style="width:0%"></div>
+                    </div>
+                    <div class="seg-bar-val">{{ dist }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <p style="font-size:10px;color:#546e7a;margin-top:.3rem;">
+                Barre plus longue = plus proche du centre
+            </p>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="na-card">
+            <div class="na-icon">🎯</div>
+            <div>K-Means Clustering</div>
+            <small>Modèles PCA / KMeans non chargés</small>
+        </div>
+        {% endif %}
+
+        <!-- ──────── REGRESSOR MONETARY ──────── -->
+        {% if result.monetary_pred is defined %}
+        <div class="model-card">
+            <div class="model-card-header">
+                <span class="model-icon">💰</span>
+                <div>
+                    <div class="model-label">Regressor Monetary</div>
+                    <div class="model-name">Dépense totale prédite</div>
+                </div>
+            </div>
+
+            <div class="monetary-amount">
+                <span class="monetary-currency">£</span>{{ result.monetary_pred | int }}
+                <span style="font-size:1rem;color:#6ee7b7;">.{{ "%02d"|format((result.monetary_pred % 1 * 100)|int) }}</span>
+            </div>
+            <div class="monetary-label">montant prédit (Monetary Total)</div>
+
+            <div class="monetary-badge">
+                💡 Valeur saisie : £{{ result.features.MonetaryTotal }}
+                &nbsp;|&nbsp;
+                {% set diff = result.monetary_pred - result.features.MonetaryTotal %}
+                {% if diff >= 0 %}
+                +£{{ diff | round(2) }} vs saisi
+                {% else %}
+                -£{{ (diff * -1) | round(2) }} vs saisi
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="na-card">
+            <div class="na-icon">💰</div>
+            <div>Regressor Monetary</div>
+            <small>Modèle non chargé</small>
+        </div>
+        {% endif %}
+
+    </div><!-- /models-grid -->
+
+    <!-- ── FEATURES SAISIES ── -->
+    <div class="features-card">
+        <div class="features-title">📋 Paramètres client saisis</div>
+        <div class="features-grid">
+            <div class="feature-item">
+                <label>Recency</label>
+                <span>{{ result.features.Recency }} j</span>
+            </div>
+            <div class="feature-item">
+                <label>Frequency</label>
+                <span>{{ result.features.Frequency }} cmd</span>
+            </div>
+            <div class="feature-item">
+                <label>Monetary Total</label>
+                <span>£{{ result.features.MonetaryTotal }}</span>
+            </div>
+            <div class="feature-item">
+                <label>Monetary Avg</label>
+                <span>£{{ result.features.MonetaryAvg }}</span>
+            </div>
+            <div class="feature-item">
+                <label>Ancienneté</label>
+                <span>{{ result.features.CustomerTenure }} j</span>
+            </div>
+            <div class="feature-item">
+                <label>Return Ratio</label>
+                <span>{{ result.features.ReturnRatio }}</span>
+            </div>
+            <div class="feature-item">
+                <label>Support Tickets</label>
+                <span>{{ result.features.SupportTickets }}</span>
+            </div>
+            <div class="feature-item">
+                <label>Satisfaction</label>
+                <span>{{ result.features.Satisfaction }} / 5</span>
+            </div>
+            <div class="feature-item">
+                <label>Âge</label>
+                <span>{{ result.features.Age }} ans</span>
+            </div>
+        </div>
     </div>
+
+    <!-- ── RECOMMANDATIONS ── -->
+    {% if result.risk is defined %}
+    <div class="reco-card">
+        <div class="reco-title">💡 Recommandations Marketing</div>
+        <ul class="reco-list">
+            {% if result.risk in ["Critique", "Eleve"] %}
+            <li>Lancer une campagne de rétention personnalisée en urgence</li>
+            <li>Offrir un bon de réduction ou avantage exclusif immédiat</li>
+            <li>Contacter le client via l'équipe support proactivement</li>
+            <li>Analyser les causes du mécontentement (tickets, retours)</li>
+            {% if result.monetary_pred is defined and result.monetary_pred > result.features.MonetaryTotal %}
+            <li>Potentiel de dépense élevé (£{{ result.monetary_pred }}) — rétention prioritaire</li>
+            {% endif %}
+            {% elif result.risk == "Moyen" %}
+            <li>Envoyer un email de re-engagement avec offre personnalisée</li>
+            <li>Proposer une adhésion au programme de fidélité</li>
+            <li>Surveiller les prochains achats et comportements</li>
+            {% else %}
+            <li>Maintenir la relation avec newsletters et recommandations produits</li>
+            <li>Valoriser ce client via le programme VIP si éligible</li>
+            <li>Encourager le parrainage et les avis produits</li>
+            {% if result.monetary_pred is defined %}
+            <li>Potentiel de dépense : £{{ result.monetary_pred }} — proposer des produits premium</li>
+            {% endif %}
+            {% endif %}
+            {% if result.segment is defined %}
+            <li>Client du Cluster {{ result.segment }} — adapter la communication au profil de ce segment</li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% endif %}<!-- /if not error -->
+
+    <div class="btn-row">
+        <a href="/"            class="btn btn-primary">← Analyser un autre client</a>
+        <a href="/dashboard"   class="btn btn-secondary">📈 Dashboard</a>
+        <a href="/test-models" class="btn btn-secondary">🧪 Test modèles</a>
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Barre churn — délai pour laisser le navigateur peindre width:0% d'abord
+    const bar = document.getElementById("churn-bar");
+    if (bar) {
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                bar.style.width = "{{ result.churn_proba if result.churn_proba is defined else 0 }}%";
+            }, 80);
+        });
+    }
+
+    // Barres segments — même technique rAF + setTimeout
+    document.querySelectorAll(".seg-bar-fill[data-w]").forEach(el => {
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                el.style.width = el.dataset.w + "%";
+            }, 120);
+        });
+    });
+});
+</script>
 </body>
 </html>

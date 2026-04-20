@@ -49,7 +49,7 @@ projet_ml_retail/
 
 ### 1. Cloner le dépôt
 ```bash
-git clone https://github.com/<votre-username>/projet_ml_retail.git
+git clone https://github.com/mohemed-amine-gharbi/projet_ml_retail
 cd projet_ml_retail
 ```
 

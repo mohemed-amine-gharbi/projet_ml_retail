@@ -11,177 +11,380 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh; color: #e0e0e0;
         }
+        /* ── NAVBAR ── */
         .navbar {
-            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
-            padding: 1rem 2rem; display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(12px);
+            padding: 0 2rem; display: flex; align-items: center;
+            justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1);
+            height: 60px; position: sticky; top: 0; z-index: 100;
         }
-        .navbar h1 { font-size: 1.3rem; color: #64b5f6; font-weight: 700; }
-        .navbar a {
-            color: #90caf9; text-decoration: none; margin-left: 1.5rem;
-            font-size: 0.9rem; transition: color 0.2s;
+        .navbar-brand { font-size: 1.15rem; font-weight: 700; color: #64b5f6; text-decoration: none; white-space: nowrap; }
+        .navbar-links { display: flex; align-items: center; gap: 0.3rem; }
+        .navbar-links a {
+            color: #90caf9; text-decoration: none; font-size: 0.88rem;
+            padding: 0.4rem 0.85rem; border-radius: 8px; display: flex;
+            align-items: center; gap: 5px; transition: background .15s, color .15s; white-space: nowrap;
         }
-        .navbar a:hover { color: #fff; }
-
-        .hero { text-align: center; padding: 4rem 2rem 2rem; }
+        .navbar-links a:hover  { background: rgba(255,255,255,0.08); color: #fff; }
+        .navbar-links a.active { background: rgba(100,181,246,0.15); color: #64b5f6; font-weight: 600; }
+        .nav-badge { background: rgba(100,181,246,0.25); color: #64b5f6; font-size: 10px;
+                     font-weight: 700; padding: 1px 6px; border-radius: 10px; line-height: 1.6; }
+        .nav-toggle { display: none; background: transparent; border: 1px solid rgba(255,255,255,0.2);
+                      color: #90caf9; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 1rem; }
+        @media (max-width: 700px) {
+            .nav-toggle { display: block; }
+            .navbar-links { display: none; flex-direction: column; position: absolute;
+                            top: 60px; left: 0; right: 0; background: #16213e;
+                            border-bottom: 1px solid rgba(255,255,255,0.1);
+                            padding: 0.8rem 1rem; gap: 0.2rem; }
+            .navbar-links.open { display: flex; }
+            .navbar-links a { width: 100%; }
+        }
+        /* ── HERO ── */
+        .hero { text-align: center; padding: 3.5rem 2rem 1.5rem; }
         .hero h2 {
             font-size: 2.2rem; font-weight: 800;
-            /* Fix: both webkit and standard property */
             background: linear-gradient(90deg, #64b5f6, #a78bfa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent; /* fallback standard */
-            margin-bottom: 0.8rem;
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; color: transparent;
+            margin-bottom: 0.7rem;
         }
-        .hero p { color: #90a4ae; font-size: 1.05rem; }
-
+        .hero p { color: #90a4ae; font-size: 1rem; }
+        /* ── QUICK LINKS ── */
+        .quick-links {
+            display: flex; justify-content: center; gap: 1rem;
+            flex-wrap: wrap; margin: 1.5rem 2rem 0;
+        }
+        .quick-link {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px; padding: 0.6rem 1.1rem;
+            color: #90caf9; text-decoration: none; font-size: 0.88rem;
+            transition: background .15s, border-color .15s;
+        }
+        .quick-link:hover { background: rgba(255,255,255,0.1); border-color: rgba(100,181,246,0.4); color: #fff; }
+        /* ── KPI CARDS ── */
         .cards-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.2rem; max-width: 900px; margin: 2rem auto; padding: 0 2rem;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+            gap: 1rem; max-width: 860px; margin: 2rem auto 0; padding: 0 1.5rem;
         }
         .card-info {
             background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 12px; padding: 1.3rem; text-align: center;
+            border-radius: 12px; padding: 1.2rem; text-align: center; transition: border-color .2s;
         }
-        .card-info .icon { font-size: 2rem; margin-bottom: 0.5rem; }
-        .card-info h3   { font-size: 0.9rem; color: #90caf9; }
-        .card-info p    { font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 0.3rem; }
-
-        .form-container { max-width: 750px; margin: 2rem auto; padding: 0 2rem; }
+        .card-info:hover { border-color: rgba(100,181,246,0.35); }
+        .card-info .icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+        .card-info h3   { font-size: 0.82rem; color: #90caf9; }
+        .card-info p    { font-size: 1.4rem; font-weight: 700; color: #fff; margin-top: 0.2rem; }
+        /* ── RÉSULTATS ATTENDUS ── */
+        .results-preview {
+            max-width: 860px; margin: 1.5rem auto 0; padding: 0 1.5rem;
+        }
+        .results-preview-title {
+            font-size: 0.82rem; color: #546e7a; text-align: center;
+            margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600;
+        }
+        .results-preview-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
+        @media (max-width: 600px) { .results-preview-grid { grid-template-columns: 1fr; } }
+        .rp-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px; padding: 0.9rem 1rem;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .rp-icon { font-size: 1.3rem; flex-shrink: 0; }
+        .rp-info label { display: block; font-size: 10px; color: #546e7a;
+                         text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+        .rp-info span  { font-size: 0.88rem; color: #90caf9; font-weight: 500; }
+        /* ── FORMULAIRE ── */
+        .form-container { max-width: 820px; margin: 2rem auto; padding: 0 1.5rem; }
         .form-card {
             background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 16px; padding: 2.5rem;
+            border-radius: 16px; padding: 2rem 2.5rem;
         }
         .form-card h3 {
-            font-size: 1.3rem; color: #64b5f6; margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;
+            font-size: 1.15rem; color: #64b5f6; margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.9rem;
+            display: flex; align-items: center; gap: 8px;
         }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; }
-        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-        .form-group label { font-size: 0.85rem; color: #90a4ae; font-weight: 600; }
-        .form-group input, .form-group select {
+        /* Note explicative des features */
+        .feature-note {
+            font-size: 0.8rem; color: #546e7a; margin-bottom: 1.5rem;
+            background: rgba(100,181,246,0.07); border: 1px solid rgba(100,181,246,0.15);
+            border-radius: 8px; padding: 0.7rem 1rem;
+        }
+        .feature-note strong { color: #64b5f6; }
+        /* Sections du formulaire */
+        .form-section { margin-bottom: 1.5rem; }
+        .form-section-title {
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .08em; color: #546e7a; margin-bottom: 0.9rem;
+            padding-bottom: 0.4rem; border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.2rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        .form-group label {
+            font-size: 0.78rem; color: #90a4ae; font-weight: 600;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .form-group .field-name {
+            font-family: 'Courier New', monospace; font-size: 0.7rem;
+            color: #64b5f6; background: rgba(100,181,246,0.1);
+            padding: 1px 5px; border-radius: 3px;
+        }
+        .form-group input {
             background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 8px; padding: 0.65rem 0.9rem;
-            color: #fff; font-size: 0.95rem; transition: border-color 0.2s;
+            border-radius: 8px; padding: 0.6rem 0.9rem;
+            color: #fff; font-size: 0.95rem; transition: border-color .2s, background .2s;
         }
-        .form-group input:focus, .form-group select:focus {
-            outline: none; border-color: #64b5f6;
-            background: rgba(100,181,246,0.08);
-        }
+        .form-group input:focus { outline: none; border-color: #64b5f6; background: rgba(100,181,246,0.07); }
         .form-group input::placeholder { color: #546e7a; }
-
+        .form-group .hint { font-size: 0.7rem; color: #546e7a; margin-top: 2px; }
         .btn-predict {
-            width: 100%; margin-top: 2rem; padding: 1rem;
+            width: 100%; margin-top: 1.8rem; padding: 1rem;
             background: linear-gradient(90deg, #1565c0, #6a1b9a);
             color: #fff; border: none; border-radius: 10px;
-            font-size: 1.05rem; font-weight: 700;
-            cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: opacity .2s, transform .1s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-predict:hover  { opacity: 0.9; transform: translateY(-1px); }
         .btn-predict:active { transform: translateY(0); }
-
-        .footer { text-align: center; padding: 2rem; color: #546e7a; font-size: 0.85rem; }
-
+        .footer { text-align: center; padding: 2rem; color: #546e7a; font-size: 0.82rem; }
         @media (max-width: 600px) {
-            .form-grid { grid-template-columns: 1fr; }
+            .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
             .hero h2   { font-size: 1.6rem; }
+            .form-card { padding: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <h1>🛒 Retail ML Analytics</h1>
-        <div>
-            <a href="/">Accueil</a>
-            <a href="/dashboard">Dashboard</a>
-        </div>
-    </nav>
-
-    <div class="hero">
-        <h2>Analyse Comportementale Clientèle</h2>
-        <p>Prédiction du Churn · Segmentation K-Means · Random Forest & Gradient Boosting</p>
+<nav class="navbar">
+    <a href="/" class="navbar-brand">🛒 Retail ML Analytics</a>
+    <div class="navbar-links">
+        <a href="/" class="active">🏠 Accueil</a>
+        <a href="/dashboard">📈 Dashboard</a>
+        <a href="/test-models">🧪 Test modèles <span class="nav-badge">5</span></a>
     </div>
+    <button class="nav-toggle" onclick="document.querySelector('.navbar-links').classList.toggle('open')">☰</button>
+</nav>
 
-    <div class="cards-grid">
-        <div class="card-info">
-            <div class="icon">🤖</div>
-            <h3>Modèles ML</h3>
-            <p>4</p>
+<div class="hero">
+    <h2>Analyse Comportementale Clientèle</h2>
+    <p>Prédiction du Churn · Segmentation K-Means · Estimation Monetary · Random Forest & Gradient Boosting</p>
+</div>
+
+<div class="quick-links">
+    <a href="/dashboard"   class="quick-link">📈 Tableau de bord</a>
+    <a href="/test-models" class="quick-link">🧪 Tester les modèles</a>
+    <a href="/debug-cols"  class="quick-link">🔍 Diagnostic features</a>
+</div>
+
+<!-- KPI cards -->
+<div class="cards-grid">
+    <div class="card-info">
+        <div class="icon">🤖</div>
+        <h3>Modèles ML</h3>
+        <p>5</p>
+    </div>
+    <div class="card-info">
+        <div class="icon">📊</div>
+        <h3>Features modèle</h3>
+        <p>{{ feature_names | length if feature_names else '—' }}</p>
+    </div>
+    <div class="card-info">
+        <div class="icon">🎯</div>
+        <h3>Tâches ML</h3>
+        <p>3</p>
+    </div>
+    <div class="card-info">
+        <div class="icon">🛡️</div>
+        <h3>Data Leakage</h3>
+        <p>Corrigé</p>
+    </div>
+</div>
+
+<!-- Aperçu des résultats -->
+<div class="results-preview">
+    <div class="results-preview-title">Ce que vous obtiendrez après analyse</div>
+    <div class="results-preview-grid">
+        <div class="rp-card">
+            <div class="rp-icon">🔮</div>
+            <div class="rp-info">
+                <label>Churn Classifier</label>
+                <span>Probabilité &amp; niveau de risque</span>
+            </div>
         </div>
-        <div class="card-info">
-            <div class="icon">📊</div>
-            <h3>Features</h3>
-            <p>52</p>
+        <div class="rp-card">
+            <div class="rp-icon">🎯</div>
+            <div class="rp-info">
+                <label>K-Means Clustering</label>
+                <span>Segment client assigné</span>
+            </div>
         </div>
-        <div class="card-info">
-            <div class="icon">👥</div>
-            <h3>Clients analysés</h3>
-            <p>4 372</p>
-        </div>
-        <div class="card-info">
-            <div class="icon">🎯</div>
-            <h3>Tâches ML</h3>
-            <p>3</p>
+        <div class="rp-card">
+            <div class="rp-icon">💰</div>
+            <div class="rp-info">
+                <label>Regressor Monetary</label>
+                <span>Dépense totale prédite (£)</span>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="form-container">
-        <div class="form-card">
-            <h3>🔮 Analyser un client</h3>
-            <form action="/predict" method="POST">
+<!-- Formulaire -->
+<div class="form-container">
+    <div class="form-card">
+        <h3>🔮 Analyser un client</h3>
+
+        <!-- Note sur l'alignement des features -->
+        <div class="feature-note">
+            ℹ️ Les champs ci-dessous correspondent aux features <strong>réellement utilisées</strong>
+            par le modèle entraîné. Les features dérivées (AvgBasket, DiversityRatio, etc.)
+            sont calculées automatiquement à partir de ces inputs.
+            {% if feature_names %}
+            <br>Features du modèle ({{ feature_names | length }}) :
+            <strong>{{ feature_names | join(', ') }}</strong>
+            {% endif %}
+        </div>
+
+        <form action="/predict" method="POST">
+
+            <!-- Section 1 : Comportement d'achat RFM -->
+            <div class="form-section">
+                <div class="form-section-title">📦 Comportement d'achat</div>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Recency (jours depuis dernier achat)</label>
-                        <input type="number" name="recency" placeholder="ex : 30"
-                               min="0" max="400" value="30">
-                    </div>
-                    <div class="form-group">
-                        <label>Frequency (nb commandes)</label>
+                        <label>
+                            Fréquence d'achat
+                            <span class="field-name">frequency</span>
+                        </label>
                         <input type="number" name="frequency" placeholder="ex : 5"
-                               min="1" max="50" value="5">
+                               min="1" max="500" step="1" required>
+                        <span class="hint">Nombre total de commandes</span>
                     </div>
                     <div class="form-group">
-                        <label>Monetary Total (£)</label>
-                        <input type="number" name="monetary_total" placeholder="ex : 500" value="500">
+                        <label>
+                            Montant total (£)
+                            <span class="field-name">monetary_total</span>
+                        </label>
+                        <input type="number" name="monetary_total" placeholder="ex : 500"
+                               step="0.01" required>
+                        <span class="hint">Somme de toutes les commandes</span>
                     </div>
                     <div class="form-group">
-                        <label>Monetary Avg (£ / commande)</label>
-                        <input type="number" name="monetary_avg" placeholder="ex : 100" value="100">
+                        <label>
+                            Montant moyen / commande (£)
+                            <span class="field-name">monetary_avg</span>
+                        </label>
+                        <input type="number" name="monetary_avg" placeholder="ex : 100"
+                               step="0.01" required>
+                        <span class="hint">MonetaryTotal / Frequency</span>
                     </div>
                     <div class="form-group">
-                        <label>Customer Tenure (jours)</label>
-                        <input type="number" name="customer_tenure" placeholder="ex : 180"
-                               min="0" max="730" value="180">
-                    </div>
-                    <div class="form-group">
-                        <label>Return Ratio (0.0 – 1.0)</label>
-                        <input type="number" name="return_ratio" step="0.01"
-                               placeholder="ex : 0.05" min="0" max="1" value="0.05">
-                    </div>
-                    <div class="form-group">
-                        <label>Support Tickets</label>
-                        <input type="number" name="support_tickets" placeholder="ex : 1"
-                               min="0" max="15" value="1">
-                    </div>
-                    <div class="form-group">
-                        <label>Satisfaction (/5)</label>
-                        <input type="number" name="satisfaction" step="0.1"
-                               placeholder="ex : 3.5" min="0" max="5" value="3.5">
-                    </div>
-                    <div class="form-group">
-                        <label>Âge (ans)</label>
-                        <input type="number" name="age" placeholder="ex : 35"
-                               min="18" max="81" value="35">
+                        <label>
+                            Ratio de retour
+                            <span class="field-name">return_ratio</span>
+                        </label>
+                        <input type="number" name="return_ratio" placeholder="ex : 0.05"
+                               step="0.01" min="0" max="1" required>
+                        <span class="hint">Transactions annulées / Total (0–1)</span>
                     </div>
                 </div>
-                <button type="submit" class="btn-predict">⚡ Analyser ce client</button>
-            </form>
-        </div>
-    </div>
+            </div>
 
-    <div class="footer">
-        Projet ML Retail · GI2-S1 · Préparé par Mohamed Amine Gharbi · 2025-2026
+            <!-- Section 2 : Profil client -->
+            <div class="form-section">
+                <div class="form-section-title">👤 Profil client</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>
+                            Ancienneté (jours)
+                            <span class="field-name">customer_tenure</span>
+                        </label>
+                        <input type="number" name="customer_tenure" placeholder="ex : 180"
+                               min="0" max="3000" step="1" required>
+                        <span class="hint">Jours depuis le 1er achat</span>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Âge (ans)
+                            <span class="field-name">age</span>
+                        </label>
+                        <input type="number" name="age" placeholder="ex : 35"
+                               min="18" max="100" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Tickets support
+                            <span class="field-name">support_tickets</span>
+                        </label>
+                        <input type="number" name="support_tickets" placeholder="ex : 1"
+                               min="0" max="15" step="1" required>
+                        <span class="hint">Nombre de tickets ouverts (0–15)</span>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Satisfaction (/5)
+                            <span class="field-name">satisfaction</span>
+                        </label>
+                        <input type="number" name="satisfaction" placeholder="ex : 3.5"
+                               step="0.1" min="1" max="5" required>
+                        <span class="hint">Score de satisfaction (1–5)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3 : Date d'inscription -->
+            <div class="form-section">
+                <div class="form-section-title">📅 Date d'inscription</div>
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label>
+                            Année d'inscription
+                            <span class="field-name">reg_year</span>
+                        </label>
+                        <input type="number" name="reg_year" placeholder="ex : 2011"
+                               min="2000" max="2030" step="1" value="2011" required>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Mois d'inscription
+                            <span class="field-name">reg_month</span>
+                        </label>
+                        <input type="number" name="reg_month" placeholder="ex : 6"
+                               min="1" max="12" step="1" value="6" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Jour (automatique)</label>
+                        <input type="number" value="15" disabled
+                               style="opacity:0.4;cursor:not-allowed;">
+                        <span class="hint">Valeur par défaut utilisée</span>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-predict">
+                ⚡ Analyser ce client — Churn + Segment + Monetary
+            </button>
+        </form>
     </div>
+</div>
+
+<div class="footer">
+    Projet ML Retail · GI2-S1 · Préparé par Mohamed Amine Gharbi · 2025-2026
+</div>
+
+<script>
+document.querySelector("form").addEventListener("submit", function(e) {
+    const fields = this.querySelectorAll("input[type='number']:not([disabled])");
+    let empty = [];
+    fields.forEach(f => { if (f.value === "") empty.push(f.name || f.placeholder); });
+    if (empty.length > 0) {
+        e.preventDefault();
+        alert("Veuillez remplir tous les champs avant d'analyser.\nChamps manquants : " + empty.join(", "));
+    }
+});
+</script>
 </body>
 </html>
